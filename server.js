@@ -90,21 +90,67 @@ function extractSpotifyTrackId(url) {
 /**
  * Get track info from Spotify
  */
+/**
+ * Get track info from Spotify including genres and audio features
+ */
 async function getSpotifyTrackInfo(trackId) {
   try {
     const token = await getSpotifyToken();
     
-    const response = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+    // Get basic track info
+    const trackResponse = await axios.get(`https://api.spotify.com/v1/tracks/${trackId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    const track = response.data;
+    const track = trackResponse.data;
+    const artistId = track.artists[0].id;
+    const albumId = track.album.id;
+
+    // Get album genres (preferred)
+    let genres = [];
+    try {
+      const albumResponse = await axios.get(`https://api.spotify.com/v1/albums/${albumId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      genres = albumResponse.data.genres || [];
+    } catch (error) {
+      console.log('Album genres not available, trying artist genres...');
+    }
+
+    // Fallback to artist genres if album has none
+    if (genres.length === 0) {
+      try {
+        const artistResponse = await axios.get(`https://api.spotify.com/v1/artists/${artistId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        genres = artistResponse.data.genres || [];
+      } catch (error) {
+        console.log('Artist genres not available');
+      }
+    }
+
+    // Get audio features (optional but great for analytics)
+    let audioFeatures = {};
+    try {
+      const audioResponse = await axios.get(`https://api.spotify.com/v1/audio-features/${trackId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      audioFeatures = {
+        danceability: audioResponse.data.danceability,
+        energy: audioResponse.data.energy,
+        valence: audioResponse.data.valence,
+        tempo: Math.round(audioResponse.data.tempo)
+      };
+    } catch (error) {
+      console.log('Audio features not available');
+    }
+
     return {
       title: track.name,
       artist: track.artists.map(artist => artist.name).join(', '),
-      album: track.album.name
+      album: track.album.name,
+      genres: genres,
+      ...audioFeatures
     };
   } catch (error) {
     console.error('❌ Error fetching Spotify track:', error.message);
