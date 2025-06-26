@@ -1,0 +1,27 @@
+# Environment variables - NEVER commit these!
+.env
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Optional npm cache directory
+.npm
+
+# Mac files
+.DS_Store
+
+# Windows files
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
