@@ -27,11 +27,11 @@
 
 **Example Flow:**
 ```
-You: https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh
-Bot: Who would you like to send it to? (name)
-You: John
-Bot: Found 'Bohemian Rhapsody' by Queen. Sending to John now!
-John: 🎵 Music from Andy: https://youtube.com/watch?v=fJ9rUzIMcZQ
+You->Bot: https://open.spotify.com/track/4iV5W9uYEdYUVa79Axb7Rh
+Bot->You: Who would you like to send it to? (name)
+You->Bot: Andy
+Bot->You: Found 'Bohemian Rhapsody' by Queen. Sending to Andy now!
+Bot->Andy: 🎵 Music from Andy: https://youtube.com/watch?v=fJ9rUzIMcZQ
 ```
 
 ## 🏗️ Architecture
@@ -86,8 +86,8 @@ SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
 YOUTUBE_API_KEY=your_youtube_api_key
 
 # Recipients (V1 Configuration)
-John_PHONE=+1234567890
-Andy_PHONE=+1234567890
+Name_PHONE=+1234567890
+Name1_PHONE=+1234567890
 
 # Server
 PORT=3000
